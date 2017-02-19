@@ -2,123 +2,128 @@
 #
 # by Dave Hensley
 #
+# Edited by Steven Demmler (sedemmler@gmail.com)
 # Picks an ideal fantasy NBA team using a modified knapsack algorithm
 #
 # Usage: python nba-optimizer.py players.csv
+#
+from ortools.linear_solver import pywraplp
+import sys
+import csv
 
-salaryCap = 60000
+salary_cap = 60000
 
-def getPositionNumber(name):
+
+def get_position_number(name):
     return {
         'Center': 0,
         'Point Guard': 1,
-        'Power Forward' : 2,
+        'Power Forward': 2,
         'Shooting Guard': 3,
         'Small Forward': 4
     }[name]
 
-def main(players, salaryCap):
-    solver = pywraplp.Solver('CoinsGridCLP', pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
-    rangeC = range(len(players[0]))
-    rangePG = range(len(players[1]))
-    rangePF = range(len(players[2]))
-    rangeSG = range(len(players[3]))
-    rangeSF = range(len(players[4]))
+def main(a, y):
+    solver = pywraplp.Solver('CoinsGridCLP', pywraplp.Solver.CBC_MIaED_INTEGER_PROGRAMMING)
 
-    takeC = [solver.IntVar(0, 1, 'takeC[%i]' % j) for j in rangeC]
-    takePG = [solver.IntVar(0, 1, 'takePG[%i]' % j) for j in rangePG]
-    takePF = [solver.IntVar(0, 1, 'takePF[%i]' % j) for j in rangePF]
-    takeSG = [solver.IntVar(0, 1, 'takeSG[%i]' % j) for j in rangeSG]
-    takeSF = [solver.IntVar(0, 1, 'takeSF[%i]' % j) for j in rangeSF]
+    range_c = range(len(a[0]))
+    range_pg = range(len(a[1]))
+    range_pf = range(len(a[2]))
+    range_sg = range(len(a[3]))
+    range_sf = range(len(a[4]))
 
-    teamsC = []
-    teamsPG = []
-    teamsPF = []
-    teamsSG = []
-    teamsSF = []
+    take_c = [solver.IntVar(0, 1, 'take_c[%i]' % j) for j in range_c]
+    take_pg = [solver.IntVar(0, 1, 'take_pg[%i]' % j) for j in range_pg]
+    take_pf = [solver.IntVar(0, 1, 'take_pf[%i]' % j) for j in range_pf]
+    take_sg = [solver.IntVar(0, 1, 'take_sg[%i]' % j) for j in range_sg]
+    take_sf = [solver.IntVar(0, 1, 'take_sf[%i]' % j) for j in range_sf]
+
+    teams_c = []
+    teams_pg = []
+    teams_pf = []
+    teams_sg = []
+    teams_sf = []
 
     for teamNumber in range(0, 29):
-        teamsC.insert(teamNumber, solver.Sum([(players[0][i][3] == teamNumber + 1) * takeC[i] for i in rangeC]))
-        teamsPG.insert(teamNumber, solver.Sum([(players[1][i][3] == teamNumber + 1) * takePG[i] for i in rangePG]))
-        teamsPF.insert(teamNumber, solver.Sum([(players[2][i][3] == teamNumber + 1) * takePF[i] for i in rangePF]))
-        teamsSG.insert(teamNumber, solver.Sum([(players[3][i][3] == teamNumber + 1) * takeSG[i] for i in rangeSG]))
-        teamsSF.insert(teamNumber, solver.Sum([(players[4][i][3] == teamNumber + 1) * takeSF[i] for i in rangeSF]))
+        teams_c.insert(teamNumber, solver.Sum([(a[0][i][3] == teamNumber + 1) * take_c[i] for i in range_c]))
+        teams_pg.insert(teamNumber, solver.Sum([(a[1][i][3] == teamNumber + 1) * take_pg[i] for i in range_pg]))
+        teams_pf.insert(teamNumber, solver.Sum([(a[2][i][3] == teamNumber + 1) * take_pf[i] for i in range_pf]))
+        teams_sg.insert(teamNumber, solver.Sum([(a[3][i][3] == teamNumber + 1) * take_sg[i] for i in range_sg]))
+        teams_sf.insert(teamNumber, solver.Sum([(a[4][i][3] == teamNumber + 1) * take_sf[i] for i in range_sf]))
 
-    valueC = solver.Sum([players[0][i][1] * takeC[i] for i in rangeC])
-    valuePG = solver.Sum([players[1][i][1] * takePG[i] for i in rangePG])
-    valuePF = solver.Sum([players[2][i][1] * takePF[i] for i in rangePF])
-    valueSG = solver.Sum([players[3][i][1] * takeSG[i] for i in rangeSG])
-    valueSF = solver.Sum([players[4][i][1] * takeSF[i] for i in rangeSF])
+    value_c = solver.Sum([a[0][i][1] * take_c[i] for i in range_c])
+    value_pg = solver.Sum([a[1][i][1] * take_pg[i] for i in range_pg])
+    value_pf = solver.Sum([a[2][i][1] * take_pf[i] for i in range_pf])
+    value_sg = solver.Sum([a[3][i][1] * take_sg[i] for i in range_sg])
+    value_sf = solver.Sum([a[4][i][1] * take_sf[i] for i in range_sf])
 
-    salaryC = solver.Sum([players[0][i][2] * takeC[i] for i in rangeC])
-    salaryPG = solver.Sum([players[1][i][2] * takePG[i] for i in rangePG])
-    salaryPF = solver.Sum([players[2][i][2] * takePF[i] for i in rangePF])
-    salarySG = solver.Sum([players[3][i][2] * takeSG[i] for i in rangeSG])
-    salarySF = solver.Sum([players[4][i][2] * takeSF[i] for i in rangeSF])
+    salray_c = solver.Sum([a[0][i][2] * take_c[i] for i in range_c])
+    salray_pg = solver.Sum([a[1][i][2] * take_pg[i] for i in range_pg])
+    salray_pf = solver.Sum([a[2][i][2] * take_pf[i] for i in range_pf])
+    salray_sg = solver.Sum([a[3][i][2] * take_sg[i] for i in range_sg])
+    salray_sf = solver.Sum([a[4][i][2] * take_sf[i] for i in range_sf])
 
-    solver.Add(salaryC + salaryPG + salaryPF + salarySG + salarySF <= salaryCap)
+    solver.Add(salray_c + salray_pg + salray_pf + salray_sg + salray_sf <= y)
 
-    solver.Add(solver.Sum(takeC[i] for i in rangeC) == 1)
-    solver.Add(solver.Sum(takePG[i] for i in rangePG) == 2)
-    solver.Add(solver.Sum(takePF[i] for i in rangePF) == 2)
-    solver.Add(solver.Sum(takeSG[i] for i in rangeSG) == 2)
-    solver.Add(solver.Sum(takeSF[i] for i in rangeSF) == 2)
+    solver.Add(solver.Sum(take_c[i] for i in range_c) == 1)
+    solver.Add(solver.Sum(take_pg[i] for i in range_pg) == 2)
+    solver.Add(solver.Sum(take_pf[i] for i in range_pf) == 2)
+    solver.Add(solver.Sum(take_sg[i] for i in range_sg) == 2)
+    solver.Add(solver.Sum(take_sf[i] for i in range_sf) == 2)
 
-    # Max 4 players per team
+    # max 4 x per team
     for i in range(0, 29):
-        solver.Add(teamsC[i] + teamsPG[i] + teamsPF[i] + teamsSG[i] + teamsSF[i] <= 4)
+        solver.Add(teams_c[i] + teams_pg[i] + teams_pf[i] + teams_sg[i] + teams_sf[i] <= 4)
 
-    solver.Maximize(valueC + valuePG + valuePF + valueSG + valueSF)
+    solver.maximize(value_c + value_pg + value_pf + value_sg + value_sf)
     solver.Solve()
     assert solver.VerifySolution(1e-7, True)
-    print 'Solved in', solver.wall_time(), 'milliseconds!', "\n"
+    print('Solved in', solver.wall_time(), 'milliseconds!', "\n")
     salary = 0
 
-    for i in rangeC:
-        if (takeC[i].SolutionValue()):
-            salary += players[0][i][2]
-            print players[0][i][0], '(C): ${:,d}'.format(players[0][i][2]), '(' + str(players[0][i][1]) + ')'
+    for i in range_c:
+        if take_c[i].SolutionValue():
+            salary += a[0][i][2]
+            print(a[0][i][0], '(C): ${:,d}'.format(a[0][i][2]), '(' + str(a[0][i][1]) + ')')
 
-    for i in rangePG:
-        if (takePG[i].SolutionValue()):
-            salary += players[1][i][2]
-            print players[1][i][0], '(PG): ${:,d}'.format(players[1][i][2]), '(' + str(players[1][i][1]) + ')'
+    for i in range_pg:
+        if take_pg[i].SolutionValue():
+            salary += a[1][i][2]
+            print(a[1][i][0], '(PG): ${:,d}'.format(a[1][i][2]), '(' + str(a[1][i][1]) + ')')
 
-    for i in rangePF:
-        if (takePF[i].SolutionValue()):
-            salary += players[2][i][2]
-            print players[2][i][0], '(PF): ${:,d}'.format(players[2][i][2]), '(' + str(players[2][i][1]) + ')'
+    for i in range_pf:
+        if take_pf[i].SolutionValue():
+            salary += a[2][i][2]
+            print(a[2][i][0], '(PF): ${:,d}'.format(a[2][i][2]), '(' + str(a[2][i][1]) + ')')
 
-    for i in rangeSG:
-        if (takeSG[i].SolutionValue()):
-            salary += players[3][i][2]
-            print players[3][i][0], '(SG): ${:,d}'.format(players[3][i][2]), '(' + str(players[3][i][1]) + ')'
+    for i in range_sg:
+        if take_sg[i].SolutionValue():
+            salary += a[3][i][2]
+            print(a[3][i][0], '(SG): ${:,d}'.format(a[3][i][2]), '(' + str(a[3][i][1]) + ')')
 
-    for i in rangeSF:
-        if (takeSF[i].SolutionValue()):
-            salary += players[4][i][2]
-            print players[4][i][0], '(SF): ${:,d}'.format(players[4][i][2]), '(' + str(players[4][i][1]) + ')'
+    for i in range_sf:
+        if take_sf[i].SolutionValue():
+            salary += a[4][i][2]
+            print(a[4][i][0], '(SF): ${:,d}'.format(a[4][i][2]), '(' + str(a[4][i][1]) + ')')
 
-    print "\n", 'Total: ${:,d}'.format(salary), '(' + str(solver.Objective().Value()) + ')'
+    print("\n", 'Total: ${:,d}'.format(salary), '(' + str(solver.Objective().Value()) + ')')
 
-import sys
 
-if (len(sys.argv) < 2):
-    print 'Usage:', sys.executable, sys.argv[0], 'players.csv'
+if len(sys.argv) < 2:
+    print('Usage:', sys.executable, sys.argv[0], 'players.csv')
     sys.exit(1)
 
-players = [[], [], [], [], []]
+team = [[], [], [], [], []]
 
-import csv
-with open(sys.argv[1], 'rb') as csvfile:
+
+with open('players.csv') as csvfile:
     reader = csv.DictReader(csvfile)
 
     for row in reader:
-        players[getPositionNumber(row['Subposition'])].append(
+        team[get_position_number(row['Subposition'])].append(
             [row['Name'], float(row['Value']), int(row['Salary']), int(row['Team'])]
         )
 
-from ortools.linear_solver import pywraplp
 
-main(players, salaryCap)
+main(team, salary_cap)
