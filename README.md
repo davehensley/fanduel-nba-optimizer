@@ -13,7 +13,7 @@ without exceeding the salary cap. The goal is to assemble the best possible fant
 
 ## What are the prerequisites?
 All you need is [python](https://www.python.org/) (which you probably already have) and Google's
-[or-tools](https://developers.google.com/optimization/installing#python) library.
+[or-tools](https://developers.google.com/optimization/introduction/installing) library.
 
 ## Where do I find projections?
 You can get free projections from various DFS websites, such as:
