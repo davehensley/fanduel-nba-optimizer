@@ -6,6 +6,9 @@
 #
 # Usage: python nba-optimizer.py players.csv
 
+import csv, sys
+from ortools.linear_solver import pywraplp
+
 salaryCap = 60000
 
 def getPositionNumber(name):
@@ -102,15 +105,12 @@ def main(players, salaryCap):
 
     print "\n", 'Total: ${:,d}'.format(salary), '(' + str(solver.Objective().Value()) + ')'
 
-import sys
-
 if (len(sys.argv) < 2):
     print 'Usage:', sys.executable, sys.argv[0], 'players.csv'
     sys.exit(1)
 
 players = [[], [], [], [], []]
 
-import csv
 with open(sys.argv[1], 'rb') as csvfile:
     reader = csv.DictReader(csvfile)
 
@@ -118,7 +118,5 @@ with open(sys.argv[1], 'rb') as csvfile:
         players[getPositionNumber(row['Subposition'])].append(
             [row['Name'], float(row['Value']), int(row['Salary']), int(row['Team'])]
         )
-
-from ortools.linear_solver import pywraplp
 
 main(players, salaryCap)
